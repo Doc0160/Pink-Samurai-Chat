@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+	<title>Pink Samurai</title>
+	<script type="text/javascript">
+
+	 function randomName(){
+	     var names = ['Dick',      'Fag',    'Pussy', 'Shit',
+			  'HorseCock', 'Nigger', 'Dog',   'Ball',
+			  'Cock',      'Anus',   'Cat',   'Cum',
+			  'Gay',       'Banana', 'Squid', 'Skull',
+			  'Slut',      'Ass',    'Vagina','Alien',
+			  'JustinBieber', 'Tentacule-Sama'];
+	     var actions_ing = ['Farting',    'Baiting',   'Shitting',
+				'Licking',    'Swallowing', 'Consuming',
+				'Sucking'];
+	     var actions_er = ['Sucker',    'Licker',   'Snorter', 'Warmer',
+			       'Fucker',    'Slurper',  'Wanker',  'Biter',
+			       'Destroyer', 'Worker',   'Swallower',
+			       'Lover',     'Massager', 'Researcher'];
+	     return names[Math.floor(Math.random()*names.length)]
+		   +actions_ing[Math.floor(Math.random()*actions_ing.length)]
+		   +" "
+		   +names[Math.floor(Math.random()*names.length)]
+		   +actions_er[Math.floor(Math.random()*actions_er.length)];
+	 }
+
+	 window.onload = function () {    
+	     if (localStorage.username === undefined) {
+		 localStorage.username = randomName();
+	     }
+	     Notification.requestPermission();
+
+	     var conn;
+	     var form = document.getElementById("form");
+	     var msg = document.getElementById("msg");
+	     var username = document.getElementById("username");
+	     username.value = localStorage.username;
+	     var log = document.getElementById("log");
+	     var channel = document.getElementById("channel");
+
+	     function appendLog(item) {
+		 var doScroll = log.scrollTop === log.scrollHeight - log.clientHeight;
+		 log.appendChild(item);
+		 if (doScroll) {
+		     log.scrollTop = log.scrollHeight - log.clientHeight;
+		 }
+	     }
+
+	     tempusername = username.value;
+	     username.onfocus = function () {
+		 tempusername = username.value;
+	     }
+
+	     username.onblur = function () {
+		 if (!conn) {
+		     return;
+		 }
+		 if (username.value != tempusername) {
+		     localStorage.username = username.value;
+		     conn.send(JSON.stringify(
+			 {
+			     "type": "username_change",
+			     "channel": channel.value,
+			     "username": username.value,
+			     "old_username": tempusername
+			 }
+		     ));
+
+		 }
+	     }
+
+	     form.onsubmit = function () {
+		 if (!conn) {
+		     return false;
+		 }
+		 if (!msg.value) {
+		     return false;
+		 }
+		 conn.send(JSON.stringify(
+		     {
+			 "type": "message",
+			 "channel": channel.value,
+			 "username": username.value,
+			 "text": msg.value
+		     }
+		 ));
+		 msg.value = "";
+		 return false;
+	     };
+
+	     function convert_imgs(text){
+		 var exp = /(\b(https?|ftp):\/\/[\w\-\.]+\.[a-zA-Z]{2,3}(?:\/\S*)?(?:[\w])+\.(?:jpg|png|gif|jpeg|bmp))$/ig;
+		 var text1=text.replace(exp, "<img src='$1'/>");
+		 return text1;
+	     }
+	     function convert_videos(text){
+		 var exp = /(\b(https?|ftp):\/\/[\w\-\.]+\.[a-zA-Z]{2,3}(?:\/\S*)?(?:[\w])+\.(?:webm))$/ig;
+		 var text1=text.replace(exp, "<video controls><source src='$1' type='video/webm'/></video>");
+		 return text1; 
+	     }
+	     function convert_urls(text){
+		 //var exp = /(\b(https?|ftp):\/\/[\w\-\.]+\.[a-zA-Z]{2,3}(?:\/\S*)?(?:[\w])+\.(?:[^p][^n][^g]|[^w][^e][^b][^m]|[^j][^p][^e]?[^g]|[^g][^i][^f]|[^b][^m][^p]))$/ig;
+		 var exp = /(\b(\w+):(\/+)((\w|[\.\/\?=&])+))/ig;
+		 var text1=text.replace(exp, "<a href='$1'>$1</a>");
+		 return text1;
+	     }
+	     
+	     if (window["WebSocket"]) {
+		 conn = new WebSocket("ws://{{$}}/ws");
+
+		 conn.onopen = function(evt) {
+		     if (!conn) {
+			 return;
+		     }
+		     conn.send(JSON.stringify(
+			 {
+			     "type": "user_joined",
+			     "username": username.value
+			 }
+		     ));
+		 }
+		 
+		 conn.onclose = function (evt) {
+		     var item = document.createElement("div");
+		     item.innerHTML = "<b>Connection closed.</b>";
+		     appendLog(item);
+		 };
+
+		 conn.onmessage = function (evt) {
+		     var item = document.createElement("div");
+		     var decoded = JSON.parse(evt.data)
+		     if (decoded.type == "message") {
+			 if (decoded.channel == channel.value || decoded.channel === undefined) {
+			     item.innerText = decoded.channel + "| " +decoded.username + " : " + decoded.text;
+			     if (!document.hasFocus())
+				 new Notification(item.innerText, {
+				     "body": item.innerText,
+				 });
+			     //item.innerHTML = convert_imgs(item.innerHTML);
+			     //item.innerHTML = convert_videos(item.innerHTML);
+			     item.innerHTML = convert_urls(item.innerHTML);
+			 }
+		     } else if (decoded.type == "username_change") {
+			 item.innerText = decoded.old_username + " changed username to " + decoded.username;
+		     } else if (decoded.type == "user_joined") {
+			 item.innerText = decoded.username + " joined " + decoded.channel;
+		     } else {
+			 item.innerText = evt.data;
+		     }
+		     appendLog(item);
+		 };
+
+		 conn.onerror = function(m) {
+		     console.log("Error occured sending..." + m.data);
+		 };
+	     } else {
+		 var item = document.createElement("div");
+		 item.innerHTML = "<b>Your browser does not support WebSockets.</b>";
+		 appendLog(item);
+	     }
+	 };
+	</script>
+	<style type="text/css">
+	 body {
+	     padding: 0;
+	     margin: auto;
+	     width: 100vw;
+	     height: 100vh;
+	     background-color: #FF80AB;
+	     background-image: linear-gradient(#FF80AB, #F50057);
+	     background-image: url('http://{{$}}/tentacles.png'), linear-gradient(#FF80AB, #F50057);
+	     background-repeat: no-repeat;
+	     background-size: cover;
+	     background-position: center 0, 0 0;
+	     /will-change: background-position;
+	     /animation: BACKKEYFRAME 5s infinite;
+	 }
+	 #middle-box {
+	     display: flex;
+	     flex-direction: column;
+	     position: absolute;
+	     height: 100%;
+	     width: 100%;
+	     z-index: 1000;
+	 }
+
+	 #log {
+	     color: white;
+	     margin: 0 auto;
+	     padding: 10px;
+	     overflow: auto;
+	     height: 90vh;
+	     width: 50vw;
+	     min-width: 500px;
+	     border: 1px solid white;
+	     border-radius: 10px;
+	     background: linear-gradient(#F48FB1FF, #F5005780);
+	 }
+
+	 #form {
+	     margin: auto;
+	     display: flex;
+	     height: 30px;
+	     overflow: hidden;
+	 }
+
+	 #form #send {
+	     border-radius: 0 10px 10px 0;
+	     background: linear-gradient(#FF4081, #F50057);
+	     border: 1px solid #FF80AB;
+	     color: white;
+	 }
+
+	 input[type="text"]:focus {
+	     border: 2px solid #FAFAFA;
+	 }
+	 input[type="text"]{
+	     border-radius: 10px;
+	     background: linear-gradient(#FF80AB, #FF4081);
+	     border: 1px solid #FF80AB;
+	     padding-left: 10px;
+	     color: white;
+	 }
+	 
+	 input[type="text"].middle {
+	     border-radius: 0;
+	 }
+	 input[type="text"].left {
+	     border-radius: 10px 0 0 10px;  
+	 }
+	 @keyframes BACKKEYFRAME {
+	     0%   { background-position-y: 100px, 0; }
+	     50%  { background-position-y: 0px, 0; }
+	     100% { background-position-y: 100px, 0; }
+	 }
+
+	</style>
+    </head>
+    <body>
+	<div id="middle-box">
+	    <div id="log"></div>
+	    <form id="form">
+		<input type="text" id="channel" class="left" size="10" value="" placeholder="Default"/>
+		<input type="text" id="username" class="middle" size="10" value="Name" autocomplete="off" placeholder="Username"/>
+		<input type="text" id="msg" class="middle" size="64" autofocus autocomplete="off"/>
+		<input type="submit" id="send" value="Send" />
+	    </form>
+	</div>
+	
+    </body>
+</html>
