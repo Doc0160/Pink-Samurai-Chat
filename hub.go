@@ -9,6 +9,7 @@ package main
 
 import(
     "encoding/json"
+    //"fmt"
 )
 
 var _ = json.Marshal
@@ -39,6 +40,7 @@ func newHub() *Hub {
 }
 
 func (h *Hub) gobroadcast(msg []byte){
+    temp = append(temp, msg)
     for client := range h.clients {
         select {
         case client.send <- msg:
@@ -50,11 +52,16 @@ func (h *Hub) gobroadcast(msg []byte){
     }
 }
 
+var temp [][]byte
+
 func (h *Hub) run() {
 	for {
 		select {
 		case client := <-h.register:
 			h.clients[client] = true
+            for _, t := range temp {
+                client.send <- t
+            }
             /*temp, _ := json.Marshal(Message{Type: _Message, Username:"Someone", Text:"a challenger has entered"})
             h.gobroadcast(temp)*/
 
@@ -63,7 +70,7 @@ func (h *Hub) run() {
 				delete(h.clients, client)
 				close(client.send)
 			}
-            temp, _ := json.Marshal(Message{Type: _Message, Username:"Someone", Text:"a challenger has been killed"})
+            temp, _ := json.Marshal(Disconnect{Type: _Disconnect, Username:client.Username})
             h.gobroadcast(temp)
             
 		case message := <-h.broadcast:

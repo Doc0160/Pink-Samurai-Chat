@@ -13,6 +13,8 @@ import (
 	"net/http"
 	"time"
 
+    "encoding/json"
+
 	"github.com/gorilla/websocket"
 )
 
@@ -49,6 +51,8 @@ type Client struct {
 
 	// Buffered channel of outbound messages.
 	send chan []byte
+
+    Username string
 }
 
 // readPump pumps messages from the websocket connection to the hub.
@@ -75,6 +79,19 @@ func (c *Client) readPump() {
 			break
 		}
 		message = bytes.TrimSpace(bytes.Replace(message, newline, space, -1))
+
+        stub := Stub{}
+        json.Unmarshal(message, &stub)
+        if stub.Type == _UsernameChange {
+            uc := UsernameChange{}
+            json.Unmarshal(message, &uc)
+            c.Username = uc.Username
+        } else if stub.Type == _ChannelJoin {
+            uc := ChannelJoin{}
+            json.Unmarshal(message, &uc)
+            c.Username = uc.Username
+        }
+        
 		c.hub.broadcast <- message
 	}
 }

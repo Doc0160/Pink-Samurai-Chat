@@ -12,6 +12,8 @@ import (
 	"log"
 	"net/http"
 	"text/template"
+    "mime"
+    "path/filepath"
 )
 
 var addr = flag.String("addr", ":8080", "http service address")
@@ -20,8 +22,16 @@ var homeTemplate = template.Must(template.ParseFiles("home.html"))
 func serveHome(w http.ResponseWriter, r *http.Request) {
 	log.Println(r.URL)
 	if r.URL.Path != "/" {
-        http.ServeFile(w, r, r.URL.Path[1:])
-		//http.Error(w, "Not found", 404)
+        res, err := Asset(r.URL.Path[1:])
+        if err != nil {
+            //http.ServeFile(w, r, r.URL.Path[1:])
+            http.Error(w, "Not found", 404)
+        } else {
+            ext := filepath.Ext(r.URL.Path[1:])
+            ext = mime.TypeByExtension(ext)
+            w.Header().Set("Content-Type", ext+"; charset=utf-8")
+            w.Write(res)
+        }
 		return
 	}
 	if r.Method != "GET" {

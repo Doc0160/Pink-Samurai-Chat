@@ -2,8 +2,13 @@
 <html lang="en">
     <head>
 	<title>Pink Samurai</title>
+	<script src="http://{{$}}/emojione.min.js"></script>
+	<link rel="stylesheet" href="http://{{$}}/emojione.min.css"/>
 	<script type="text/javascript">
-
+	 emojione.ascii = true;
+	 emojione.imageType = 'svg';
+	 emojione.imagePathSVG = 'http://{{$}}/svg/';
+	 
 	 function randomName(){
 	     var names = ['Dick',      'Fag',    'Pussy', 'Shit',
 			  'HorseCock', 'Nigger', 'Dog',   'Ball',
@@ -45,6 +50,20 @@
 		 if (doScroll) {
 		     log.scrollTop = log.scrollHeight - log.clientHeight;
 		 }
+	     }
+
+	     channel.onblur = function () {
+		 if(!conn) {
+		     return;
+		 }
+		 log.innerHTML = "";
+		 conn.send(JSON.stringify(
+		     {
+			 "type": "channel_join",
+			 "channel": channel.value,
+			 "username": username.value
+		     }
+		 ));
 	     }
 
 	     tempusername = username.value;
@@ -115,8 +134,9 @@
 		     }
 		     conn.send(JSON.stringify(
 			 {
-			     "type": "user_joined",
-			     "username": username.value
+			     "type": "channel_join",
+			     "username": username.value,
+			     "channel": channel.value
 			 }
 		     ));
 		 }
@@ -132,14 +152,15 @@
 		     var decoded = JSON.parse(evt.data)
 		     if (decoded.type == "message") {
 			 if (decoded.channel == channel.value || decoded.channel === undefined) {
-			     item.innerText = decoded.channel + "| " +decoded.username + " : " + decoded.text;
+			     item.innerText = decoded.username + " : " + decoded.text;
 			     if (!document.hasFocus())
 				 new Notification(item.innerText, {
 				     "body": item.innerText,
 				 });
 			     //item.innerHTML = convert_imgs(item.innerHTML);
 			     //item.innerHTML = convert_videos(item.innerHTML);
-			     item.innerHTML = convert_urls(item.innerHTML);
+			     //item.innerHTML = convert_urls(item.innerText);
+			     item.innerHTML = emojione.toImage(item.innerText);
 			 }
 		     } else if (decoded.type == "username_change") {
 			 item.innerText = decoded.old_username + " changed username to " + decoded.username;
@@ -228,11 +249,6 @@
 	 }
 	 input[type="text"].left {
 	     border-radius: 10px 0 0 10px;  
-	 }
-	 @keyframes BACKKEYFRAME {
-	     0%   { background-position-y: 100px, 0; }
-	     50%  { background-position-y: 0px, 0; }
-	     100% { background-position-y: 100px, 0; }
 	 }
 
 	</style>

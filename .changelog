@@ -1,6 +1,18 @@
+2016-11-12    <Doc0160@DOC>
+
+        * home.html: modifications emojis (emojione)
+
+        * hub.go: disconnect msg
+
+2016-11-11    <Doc0160@DOC>
+
+        * home.html: added emojis whith emojione
+
+        * build.bat: embedded data
+
 2016-11-09    <Doc0160@DOC>
 
-        * Idée diabolique de proxy farceur ^^
+        * Idée: diabolique de proxy farceur ^^
 
         * home.html: Little CSS
 
