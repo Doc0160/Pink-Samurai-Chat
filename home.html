@@ -1,268 +1,374 @@
+<!--
+     /* ========================================================================
+     $File: $
+     $Date: $
+     $Revision: $
+     $Creator: Tristan Magniez $
+     ======================================================================== */
+   -->
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
     <head>
-	<title>Pink Samurai</title>
-	<script src="http://{{$}}/emojione.min.js"></script>
-	<link rel="stylesheet" href="http://{{$}}/emojione.min.css"/>
-	<script type="text/javascript">
-	 emojione.ascii = true;
-	 emojione.imageType = 'svg';
-	 emojione.imagePathSVG = 'http://{{$}}/svg/';
-	 
-	 function randomName(){
-	     var names = ['Dick',      'Fag',    'Pussy', 'Shit',
-			  'HorseCock', 'Nigger', 'Dog',   'Ball',
-			  'Cock',      'Anus',   'Cat',   'Cum',
-			  'Gay',       'Banana', 'Squid', 'Skull',
-			  'Slut',      'Ass',    'Vagina','Alien',
-			  'JustinBieber', 'Tentacule-Sama'];
-	     var actions_ing = ['Farting',    'Baiting',   'Shitting',
-				'Licking',    'Swallowing', 'Consuming',
-				'Sucking'];
-	     var actions_er = ['Sucker',    'Licker',   'Snorter', 'Warmer',
-			       'Fucker',    'Slurper',  'Wanker',  'Biter',
-			       'Destroyer', 'Worker',   'Swallower',
-			       'Lover',     'Massager', 'Researcher'];
-	     return names[Math.floor(Math.random()*names.length)]
-		   +actions_ing[Math.floor(Math.random()*actions_ing.length)]
-		   +" "
-		   +names[Math.floor(Math.random()*names.length)]
-		   +actions_er[Math.floor(Math.random()*actions_er.length)];
-	 }
+	    <!-- https://{{$}}/ChangeLog -->
+	    <!-- https://{{$}}/compil -->
+	    <!-- https://{{$}}/PFUDOR.mp3 -->
+	    <title>Pink Samurai - Chat</title>
+	    <link rel=”shortcut icon” href=”favicon.ico” type=”image/x-icon” />
+	    <script src="compatibility/ie.min.js"></script>
+	    <script src="bonus/konami.min.js"></script>
+	    <script src="bonus/zalgo.min.js"></script>
+	    <script src="emojione/emojione.min.js"></script>
+	    <link rel="stylesheet" href="emojione/emojione.min.css" />
+	    <link rel="stylesheet" href="fonts/LiberationMono.min.css" />
+	    <link rel="stylesheet" href="bonus/bonus.min.css" />
 
-	 window.onload = function () {    
-	     if (localStorage.username === undefined) {
-		 localStorage.username = randomName();
-	     }
-	     Notification.requestPermission();
-
-	     var conn;
-	     var form = document.getElementById("form");
-	     var msg = document.getElementById("msg");
-	     var username = document.getElementById("username");
-	     username.value = localStorage.username;
-	     var log = document.getElementById("log");
-	     var channel = document.getElementById("channel");
-
-	     function appendLog(item) {
-		 var doScroll = log.scrollTop === log.scrollHeight - log.clientHeight;
-		 log.appendChild(item);
-		 if (doScroll) {
-		     log.scrollTop = log.scrollHeight - log.clientHeight;
-		 }
+        <script src="min/home.js"></script>
+	    <link rel="stylesheet" href="min/home.css"/>
+        
+	    <style>
+	     .vortex-1 {
+             background : url(vortex-1.png);
+             z-index : 3;
+             animation: spin 4s infinite linear;
 	     }
 
-	     channel.onblur = function () {
-		 if(!conn) {
-		     return;
-		 }
-		 log.innerHTML = "";
-		 conn.send(JSON.stringify(
-		     {
-			 "type": "channel_join",
-			 "channel": channel.value,
-			 "username": username.value
-		     }
-		 ));
+	     .vortex-2 {
+             background : url(vortex-2.png);
+             z-index : 4;
+             opacity : .8;
+             animation:spin 11s infinite linear;
 	     }
 
-	     tempusername = username.value;
-	     username.onfocus = function () {
-		 tempusername = username.value;
+	     .vortex-3 {
+             background : url(vortex-3.png);
+             z-index : 5;
+             opacity : .6;
+             -webkit-animation:spin 20s infinite linear;
 	     }
 
-	     username.onblur = function () {
-		 if (!conn) {
-		     return;
-		 }
-		 if (username.value != tempusername) {
-		     localStorage.username = username.value;
-		     conn.send(JSON.stringify(
-			 {
-			     "type": "username_change",
-			     "channel": channel.value,
-			     "username": username.value,
-			     "old_username": tempusername
-			 }
-		     ));
-
-		 }
-	     }
-
-	     form.onsubmit = function () {
-		 if (!conn) {
-		     return false;
-		 }
-		 if (!msg.value) {
-		     return false;
-		 }
-		 conn.send(JSON.stringify(
-		     {
-			 "type": "message",
-			 "channel": channel.value,
-			 "username": username.value,
-			 "text": msg.value
-		     }
-		 ));
-		 msg.value = "";
-		 return false;
-	     };
-
-	     function convert_imgs(text){
-		 var exp = /(\b(https?|ftp):\/\/[\w\-\.]+\.[a-zA-Z]{2,3}(?:\/\S*)?(?:[\w])+\.(?:jpg|png|gif|jpeg|bmp))$/ig;
-		 var text1=text.replace(exp, "<img src='$1'/>");
-		 return text1;
-	     }
-	     function convert_videos(text){
-		 var exp = /(\b(https?|ftp):\/\/[\w\-\.]+\.[a-zA-Z]{2,3}(?:\/\S*)?(?:[\w])+\.(?:webm))$/ig;
-		 var text1=text.replace(exp, "<video controls><source src='$1' type='video/webm'/></video>");
-		 return text1; 
-	     }
-	     function convert_urls(text){
-		 //var exp = /(\b(https?|ftp):\/\/[\w\-\.]+\.[a-zA-Z]{2,3}(?:\/\S*)?(?:[\w])+\.(?:[^p][^n][^g]|[^w][^e][^b][^m]|[^j][^p][^e]?[^g]|[^g][^i][^f]|[^b][^m][^p]))$/ig;
-		 var exp = /(\b(\w+):(\/+)((\w|[\.\/\?=&])+))/ig;
-		 var text1=text.replace(exp, "<a href='$1'>$1</a>");
-		 return text1;
+	     .vortex-4 {
+             background : url(vortex-2.png);
+             z-index : 2;
+             opacity : 1;
+             transform : scale(1.5);
+             animation:spin 30s infinite linear;
 	     }
 	     
-	     if (window["WebSocket"]) {
-		 conn = new WebSocket("ws://{{$}}/ws");
-
-		 conn.onopen = function(evt) {
-		     if (!conn) {
-			 return;
-		     }
-		     conn.send(JSON.stringify(
-			 {
-			     "type": "channel_join",
-			     "username": username.value,
-			     "channel": channel.value
-			 }
-		     ));
-		 }
-		 
-		 conn.onclose = function (evt) {
-		     var item = document.createElement("div");
-		     item.innerHTML = "<b>Connection closed.</b>";
-		     appendLog(item);
-		 };
-
-		 conn.onmessage = function (evt) {
-		     var item = document.createElement("div");
-		     var decoded = JSON.parse(evt.data)
-		     if (decoded.type == "message") {
-			 if (decoded.channel == channel.value || decoded.channel === undefined) {
-			     item.innerText = decoded.username + " : " + decoded.text;
-			     if (!document.hasFocus())
-				 new Notification(item.innerText, {
-				     "body": item.innerText,
-				 });
-			     //item.innerHTML = convert_imgs(item.innerHTML);
-			     //item.innerHTML = convert_videos(item.innerHTML);
-			     //item.innerHTML = convert_urls(item.innerText);
-			     item.innerHTML = emojione.toImage(item.innerText);
-			 }
-		     } else if (decoded.type == "username_change") {
-			 item.innerText = decoded.old_username + " changed username to " + decoded.username;
-		     } else if (decoded.type == "user_joined") {
-			 item.innerText = decoded.username + " joined " + decoded.channel;
-		     } else {
-			 item.innerText = evt.data;
-		     }
-		     appendLog(item);
-		 };
-
-		 conn.onerror = function(m) {
-		     console.log("Error occured sending..." + m.data);
-		 };
-	     } else {
-		 var item = document.createElement("div");
-		 item.innerHTML = "<b>Your browser does not support WebSockets.</b>";
-		 appendLog(item);
+	     .background {
+             background: url(background.jpg) 50% 50% no-repeat;
+             z-index: 1;
+             animation: reverse-spin 90s infinite linear;
 	     }
-	 };
-	</script>
-	<style type="text/css">
-	 body {
-	     padding: 0;
-	     margin: auto;
-	     width: 100vw;
-	     height: 100vh;
-	     background-color: #FF80AB;
-	     background-image: linear-gradient(#FF80AB, #F50057);
-	     background-image: url('http://{{$}}/tentacles.png'), linear-gradient(#FF80AB, #F50057);
-	     background-repeat: no-repeat;
-	     background-size: cover;
-	     background-position: center 0, 0 0;
-	     /will-change: background-position;
-	     /animation: BACKKEYFRAME 5s infinite;
-	 }
-	 #middle-box {
-	     display: flex;
-	     flex-direction: column;
-	     position: absolute;
-	     height: 100%;
-	     width: 100%;
-	     z-index: 1000;
-	 }
 
-	 #log {
-	     color: white;
-	     margin: 0 auto;
-	     padding: 10px;
-	     overflow: auto;
-	     height: 90vh;
-	     width: 50vw;
-	     min-width: 500px;
-	     border: 1px solid white;
-	     border-radius: 10px;
-	     background: linear-gradient(#F48FB1FF, #F5005780);
-	 }
+	     #bonus .message {
+             animation: spin 20s infinite linear;
+             z-index: 7;
+	     }
 
-	 #form {
-	     margin: auto;
-	     display: flex;
-	     height: 30px;
-	     overflow: hidden;
-	 }
+	     @-webkit-keyframes spin {
+             0% { transform:rotate(0deg); }
+             100% { transform:rotate(360deg); }
+	     }
 
-	 #form #send {
-	     border-radius: 0 10px 10px 0;
-	     background: linear-gradient(#FF4081, #F50057);
-	     border: 1px solid #FF80AB;
-	     color: white;
-	 }
+	     #error-404, #bonus .message, .background, .vortex {
+             position: absolute;
+             height: 700px;
+             width: 700px;
+	     }
+	    </style>
 
-	 input[type="text"]:focus {
-	     border: 2px solid #FAFAFA;
-	 }
-	 input[type="text"]{
-	     border-radius: 10px;
-	     background: linear-gradient(#FF80AB, #FF4081);
-	     border: 1px solid #FF80AB;
-	     padding-left: 10px;
-	     color: white;
-	 }
-	 
-	 input[type="text"].middle {
-	     border-radius: 0;
-	 }
-	 input[type="text"].left {
-	     border-radius: 10px 0 0 10px;  
-	 }
+	    <script type="text/javascript">
 
-	</style>
+	     "use strict";
+
+	     window.onload = function () {
+             
+	         emojione.ascii = true;
+	         emojione.imageType = 'svg';
+	         emojione.imagePathSVG = '/emojione/svg/';
+             
+             var bonusBuffer;
+	         var bonusBuffer2;
+	         var play = function(url, loop = false) {
+	             bonusBuffer = context.createBufferSource();
+	             bonusBuffer.connect(context.destination);
+	             
+	             var request = new XMLHttpRequest();
+	             
+	             request.open('GET', url, true);
+	             request.responseType = 'arraybuffer';
+	             
+	             request.onload = function () {
+		             var undecodedAudio = request.response;
+		             
+		             context.decodeAudioData(undecodedAudio, function (buffer) {
+		                 bonusBuffer.buffer = buffer;
+		                 bonusBuffer.loop = loop;
+		                 bonusBuffer.start(context.currentTime);
+		             });
+	             };
+	             
+	             request.send();
+	         }
+
+	         var play2 = function(url, loop = false) {
+	             bonusBuffer2 = context.createBufferSource();
+	             bonusBuffer2.connect(context.destination);
+	             
+	             var request = new XMLHttpRequest();
+	             
+	             request.open('GET', url, true);
+	             request.responseType = 'arraybuffer';
+	             
+	             request.onload = function () {
+		             var undecodedAudio = request.response;
+		             
+		             context.decodeAudioData(undecodedAudio, function (buffer) {
+		                 bonusBuffer2.buffer = buffer;
+		                 bonusBuffer2.loop = loop;
+		                 bonusBuffer2.start(context.currentTime);
+		             });
+	             };
+	             
+	             request.send();
+	         }
+	         
+	         var unbonus = function(){
+                 var bonus = document.getElementById("bonus");
+                 if(bonus.getAttribute("class") == "") return;
+	             if(bonusBuffer != undefined) bonusBuffer.stop();
+	             if(bonusBuffer2 != undefined) bonusBuffer2.stop();
+                 bonus.setAttribute("class", "");
+                 bonus.innerHTML = "";
+                 bonus.setAttribute("data-text-jp", "触手さまはうれしいです!");
+                 bonus.setAttribute("data-text-en", "Tentacule-Sama is Happy!");
+                 bonus.setAttribute("data-text-fr", "Tentacule-Sama est Heureux!");
+                 bonus.setAttribute("data-text", "");
+	         };
+	         
+	         var vortex = function(){
+                 var vortex = document.getElementById("bonus");
+                 if(bonus.getAttribute("class") == "vortex") return;
+                 bonus.setAttribute("class", "vortex");
+                 
+                 vortex.innerHTML = '<div id="error-404">';
+                 vortex.innerHTML += '<div class="message">触手さまはうれしいです!</div>';
+                 vortex.innerHTML += '<div class="background"></div>';
+                 vortex.innerHTML += '<div class="vortex vortex-1"></div>';
+                 vortex.innerHTML += '<div class="vortex vortex-2"></div>';
+                 vortex.innerHTML += '<div class="vortex vortex-3"></div>';
+                 vortex.innerHTML += '<div class="vortex vortex-4"></div>';
+                 vortex.innerHTML += '</div>';       
+	         };
+	         
+	         var festive = function(){
+                 var festive = document.getElementById("bonus");
+                 if(festive.getAttribute("class") == "festive") return;
+                 festive.setAttribute("class", "festive");
+                 festive.innerHTML = "触手さまはうれしいです!";
+	             play('/bonus/gay/Hentai_Sound.mp3', true);
+	         };
+
+	         var glitch = function(){
+                 var glitch = document.getElementById("bonus");
+                 if(glitch.getAttribute("class") == "glitch") return;
+                 glitch.setAttribute("class", "glitch");
+                 var space = 5;
+                 var i = 0;
+                 var f = function(){
+		             if(glitch.getAttribute("class") === "glitch"){
+		                 glitch.innerText = zalgo.heComes("触手さまはうれしいです!", {
+			                 size: i/space,
+		                 });
+		                 glitch.setAttribute("data-text", glitch.innerText);
+		                 if(i<64*space)i++;
+		                 setTimeout(f, Math.random() * (1000 - 250) + 250);
+		             }
+                 }
+                 f();
+	             play('/bonus/glitch/static_noise.mp3', true);
+	             play2('/bonus/glitch/voice.mp3', true);
+	         };
+	         
+	         var easter_egg = new Konami(function() {
+                 if (document.getElementById("bonus").getAttribute("class") == "") {
+		             var items = [
+		                 festive,
+		                 glitch,
+		             ];
+		             items[Math.floor(Math.random()*items.length)]();
+                 } else {
+		             unbonus();
+                 }
+	         });
+             
+	         var context = new (window.AudioContext || window.webkitAudioContext)();
+             
+	         if (localStorage.channel === undefined) {
+		         localStorage.channel = "";
+             }
+
+             chat.msg = document.getElementById("msg");
+             chat.username = document.getElementById("username");
+             chat.username.value = chat.getUsername();
+             chat.channel = document.getElementById("channel");
+	         chat.channel.value = localStorage.channel;
+             chat.log = document.getElementById("log");
+
+             function appendLog(item) {
+		         var doScroll = chat.log.scrollTop === chat.log.scrollHeight - chat.log.clientHeight;
+		         log.appendChild(item);
+		         if (doScroll) {
+		             chat.log.scrollTop = chat.log.scrollHeight - chat.log.clientHeight;
+		         }
+             }
+
+             chat.channel.onblur = function () {
+		         if(!chat.conn) {
+		             return;
+		         }
+		         if(chat.channel.value != localStorage.channel){
+		             chat.conn.send(JSON.stringify(
+			             {
+			                 "type":    "channel_quit",
+			                 "channel": localStorage.channel,
+			             }
+		             ));
+		             chat.channel.value = channel.value.trim();
+		             localStorage.channel = chat.channel.value;
+		             log.innerHTML = "";
+		             chat.conn.send(JSON.stringify(
+			             {
+			                 "type":    "channel_join",
+			                 "channel": chat.channel.value,
+			             }
+		             ));
+		         }
+             }
+             chat.channel.onchange = chat.channel.onblur;
+
+             chat.msg.onkeydown = function(e){
+		         if(e.which == 13 & !e.shiftKey){
+		             send.onclick();
+		             return false;
+		         }
+             }
+
+	         send.onclick  = function () {
+		         if (!chat.conn) return false;
+		         if (!chat.msg.value) {
+		             return false;
+		         }
+		         chat.msg.value = chat.msg.value.replace("\n", "\\n");
+                 if (chat.msg.value[0] == "/") {
+                     chat.message_senders.SendCommand();
+                 } else {
+                     chat.message_senders.SendMessage();
+                 }
+		         chat.msg.value = "";
+		         return false;
+             };
+             
+             if (window["WebSocket"]) {
+                 chat.conn = new WebSocket("wss://{{$}}/ws");
+
+		         chat.conn.onopen = function(evt) {
+		             if (!chat.conn) {
+			             return;
+		             }
+		         }
+		         
+		         chat.conn.onclose = function (evt) {
+		             var item = document.createElement("div");
+		             item.innerHTML = "<b>Connection closed.</b>";
+		             appendLog(item);
+		         };
+
+                 chat.conn.onerror = function(m) {
+		             console.log("Error occured sending..." + m.data);
+                     var item = document.createElement("div");
+		             item.innerHTML = "<b>Error occured sending..." + m.data + "</b>";
+		             appendLog(item);
+		         };
+
+		         chat.conn.onmessage = function (evt) {
+		             var decoded = JSON.parse(evt.data)
+		             if (decoded.channel == channel.value) {
+                         var item = document.createElement("div");
+		                 item.setAttribute("class", "item");
+                         if (chat.message_handlers[decoded.type] !== undefined) {
+                             chat.message_handlers[decoded.type](item, decoded);
+                         } else {
+			                 item.innerText = evt.data;
+                         }
+                         appendLog(item);
+		             }
+		         };
+                 
+             } else {
+		         var item = document.createElement("div");
+		         item.innerHTML = "<b>Your browser does not support WebSockets.</b>";
+		         appendLog(item);
+             }
+
+             Notification.requestPermission().then(function(result) {
+                 if (result === 'denied') {
+                     var item = document.createElement("div");
+		             item.innerHTML = "<b>I can't notify you.</b>";
+		             appendLog(item);
+                     return;
+                 }
+                 if (result === 'default') {
+                     var item = document.createElement("div");
+		             item.innerHTML = "<b>I can notify you.</b>";
+		             appendLog(item);
+                     return;
+                 }
+             });
+             
+             navigator.getUserMedia = (navigator.getUserMedia ||
+				                       navigator.webkitGetUserMedia ||
+				                       navigator.mozGetUserMedia ||
+				                       navigator.msGetUserMedia);
+	         navigator.getUserMedia( {audio:true}, function(){
+                 var item = document.createElement("div");
+		         item.innerHTML = "<b>I can hear you.</b>";
+		         appendLog(item);
+	         }, function(){
+                 var item = document.createElement("div");
+		         item.innerHTML = "<b>I can't hear you.</b>";
+		         appendLog(item);
+	         });
+	     };
+
+	    </script>
+
     </head>
     <body>
-	<div id="middle-box">
-	    <div id="log"></div>
-	    <form id="form">
-		<input type="text" id="channel" class="left" size="10" value="" placeholder="Default"/>
-		<input type="text" id="username" class="middle" size="10" value="Name" autocomplete="off" placeholder="Username"/>
-		<input type="text" id="msg" class="middle" size="64" autofocus autocomplete="off"/>
-		<input type="submit" id="send" value="Send" />
-	    </form>
-	</div>
-	
+
+        <div id="middle-box">
+
+            <div class="top">
+		        <input type="text" list="channels" id="channel" class="left" autocomplete="off" value="" placeholder="Default"/>
+		        <datalist id="channels">
+		            <option value=" "/>
+		            <option value="random"/>
+		            <option value="dev"/>
+		            <option value="test"/>
+		        </datalist>
+		        <input type="text" id="username" readonly="true" class="right" value="Name" autocomplete="off" placeholder="Username"/>
+	        </div>
+
+            <div id="log"></div>
+
+            <form class="form">
+		        <textarea id="msg" class="left" spellcheck="true" autofocus="true" autocomplete="off"></textarea>
+		        <a id="send" href="#">Send </a>
+            </form>
+
+        </div>
+
+        <div id="bonus" class=""></div>
+
     </body>
 </html>

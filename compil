@@ -1,0 +1,141 @@
+== Preparation 
+
+preps.ibt Statistics
+
+Total complete timings: 899
+Total incomplete timings: 1
+Days with timings: 9
+Days between first and last timing: 8
+Timings marked successful (889):
+  Slowest: 14.219 seconds
+  Fastest: 1.375 seconds
+  Average: 2.302 seconds
+  Total: 34 minutes, 7.211 seconds
+Timings marked failed (10):
+  Slowest: 0.219 seconds
+  Fastest: 0.015 seconds
+  Average: 0.148 seconds
+  Total: 1.481 seconds
+
+All (0.300000 days/bucket):
+|               *               14.219 seconds
+|               *              
+|               *           *  
+|               *           *  
+|               *        *  *  
+|               *        *  *  
+|   *        *  *     *  *  *  
+|   *  *     *  *  *  *  *  *  
+|*  *  *     *  *  *  *  *  *  
+|*  *  *     *  *  *  *  *  *  
++------------------------------ 0.000 seconds
+
+|                     *         259
+|                     *        
+|                     *        
+|            *        *        
+|            *  *     *        
+|      *     *  *     *        
+|      *     *  *     *        
+|   *  *     *  *     *  *     
+|   *  *     *  *     *  *     
+|*  *  *     *  *  *  *  *  *  
++------------------------------ 0
+
+Recent (1.000000 day/bucket):
+|                         *     14.219 seconds
+|                         *    
+|                         *   *
+|                         *   *
+|                         *  **
+|                         *  **
+|                     *  ** ***
+|                     ** ******
+|                    *** ******
+|                    *** ******
++------------------------------ 0.000 seconds
+
+|                           *   259
+|                           *  
+|                           *  
+|                        *  *  
+|                        ** *  
+|                      * ** *  
+|                      * ** *  
+|                     ** ** ** 
+|                     ** ** ** 
+|                    *** ******
++------------------------------ 0
+
+Total time spent: 34 minutes, 8.692 seconds
+= 
+== Pink Samurai 
+
+ps.ibt Statistics
+
+Total complete timings: 1077
+Total incomplete timings: 7
+Days with timings: 16
+Days between first and last timing: 20
+Timings marked successful (762):
+  Slowest: 1 minute, 11.187 seconds
+  Fastest: 0.766 seconds
+  Average: 8.007 seconds
+  Total: 1 hour, 41 minutes, 41.618 seconds
+Timings marked failed (315):
+  Slowest: 18.375 seconds
+  Fastest: 0.250 seconds
+  Average: 1.794 seconds
+  Total: 9 minutes, 25.400 seconds
+
+All (0.700000 days/bucket):
+|                         *     1 minute, 11.187 seconds
+|                         *    
+|                         *    
+|                         *    
+|                         *    
+|                         *    
+|      *      *          **    
+|      *      * *** * * *** *  
+|      * **   * *** * * *** *  
+|*     * **  ** *** * * *** ** 
++------------------------------ 0.000 seconds
+
+|                         *     259
+|                         *    
+|                         *    
+|                     *   *    
+|                     * * *    
+|                   * * * *    
+|                   * * * *    
+|                ** * * * * *  
+|        *    *  ** * * * * *  
+|*     * **  ** *** * * *** ** 
++------------------------------ 0
+
+Recent (1.000000 day/bucket):
+|                           *   1 minute, 11.187 seconds
+|                           *  
+|                           *  
+|                           *  
+|                           *  
+|                           *  
+|             *    *       **  
+|             *    ***** ***** 
+|             ***  ***** ***** 
+|        *    *** ****** ******
++------------------------------ 0.000 seconds
+
+|                           *   259
+|                           *  
+|                           *  
+|                        *  *  
+|                        ** *  
+|                      * ** *  
+|                      * ** *  
+|                    *** ** ** 
+|              *   * *** ** ** 
+|        *    *** ****** ******
++------------------------------ 0
+
+Total time spent: 1 hour, 51 minutes, 7.018 seconds

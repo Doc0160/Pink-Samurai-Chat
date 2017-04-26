@@ -1,0 +1,100 @@
+#bonus{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9000;
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: Liberation Mono, Arial;
+    font-size: 250%;
+    color: white;
+    pointer-events: none;
+}
+
+.festive {
+    background: url("/bonus/gay/tentacule.gif");
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center;
+    background: url("/bonus/gay/festive.gif"), url("/bonus/gay/tentacule.gif");
+    background-repeat: repeat, no-repeat;
+    background-attachment: scroll, fixed;
+    background-position: 0, center;
+    animation: appear 1s infinite linear;
+}
+@keyframes appear {
+    0% { color: rgba(255,255,255, 255); }
+    2% { color: rgba(255,255,255, 0); }
+}
+
+.glitch {
+    background-image: url("/bonus/glicth/glitch0.gif");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-image: url("/bonus/glitch/glitch0.gif"), url("/bonus/glitch/glitch1.gif");
+    background-repeat: no-repeat, no-repeat;
+    background-size: cover, cover;
+    animation: disappear 1s infinite linear;
+}
+.glitch:before {
+    z-index: -1;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    content: attr(data-text);
+    color: blue;
+    animation: wavea 1s infinite linear, disappear 1s infinite linear;
+}
+.glitch:after {
+    z-index: -1;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    content: attr(data-text);
+    color: red;
+    animation: wave 1s infinite linear, disappear 1s infinite linear;
+}
+@keyframes wavea{
+    0%{left: -1px;}
+    10%{left: +4px;}
+    20%{left: +5px;}
+    30%{left: -5px;}
+    40%{left: +0px;}
+    50%{left: +2px;}
+    60%{left: -2px;}
+    70%{left: +4px;}
+    80%{left: +2px;}
+    90%{left: +5px;}
+    100%{left: +4px;}
+}
+@keyframes wave{
+    0%{left: +4px;}
+    10%{left: -4px;}
+    20%{left: -4px;}
+    30%{left: -2px;}
+    40%{left: +0px;}
+    50%{left: -3px;}
+    60%{left: +3px;}
+    70%{left: -3px;}
+    80%{left: +4px;}
+    90%{left: +2px;}
+    100%{left: +0px;}
+}
+@keyframes disappear {
+    0% { color: rgba(255,255,255, 0); }
+    2% { color: rgba(255,255,255, 255); }
+}

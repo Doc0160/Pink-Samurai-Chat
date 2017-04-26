@@ -1,0 +1,44 @@
+body {
+    margin: 0;
+    padding: 0;
+    color: white;
+    font-family: Liberation Mono, Arial;
+    background: #000;
+}
+
+.back {
+    background: #000 url('/tentacles.png');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+}
+
+#back {
+    text-align: center;
+    Display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+}
+#back #text {
+    flex: 1;
+}
+#back #text div {
+    opacity: 0;
+    //animation-delay: 60s;
+    //animation: pulse 5s 1 forwards;
+}
+
+#back canvas,
+#back img {
+    width: 960px;
+    height: 480px;
+}
+
+@keyframes pulse {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}

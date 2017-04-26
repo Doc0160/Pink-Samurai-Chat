@@ -1,0 +1,187 @@
+
+body {
+    padding: 0;
+    margin: auto;
+    width: 100vw;
+    height: 100vh;
+    background-color: #FF80AB;
+    background-image: linear-gradient(#FF80AB, #F50057);
+    background-image: url('/tentacles.png'), linear-gradient(#FF80AB, #F50057);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center 0, 0 0;
+    font-family: Liberation Mono, Arial;
+    font-size: 90%;
+}
+
+#middle-box {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    z-index: 1000;
+}
+
+#log {
+    color: white;
+    margin: 0 auto;
+    padding: 10px;
+    overflow: auto;
+    //height: 85vh;
+    flex: 1;
+    width: 50vw;
+    min-width: 500px;
+    border: 1px solid white;
+    border-radius: 10px;
+    background: rgba(244, 143, 177, 0.75);
+    //background: linear-gradient(#F48FB1FF, #F5005780);
+    word-wrap: break-word;    
+    box-shadow: rgba(0, 0, 0, 0.188235) 0px 10px 50px, rgba(0, 0, 0, 0.227451) 0px 6px 50px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.form {
+    width: 50vw;
+    min-width: 500px;
+    margin: auto;
+    display: flex;
+    justify-content: center;
+    box-shadow: rgba(0, 0, 0, 0.188235) 0px 10px 50px, rgba(0, 0, 0, 0.227451) 0px 6px 50px;
+    border-radius: 10px;
+}
+
+.form a {
+    border-radius: 0 10px 10px 0;
+    background: rgba(245, 0, 87, 0.75);
+    //background: linear-gradient(#FF4081FF, #F5005780);
+    border: 1px solid #FF80AB;
+    color: white;
+    font-family: Liberation Mono, Arial;
+    font-size: 14px;
+    height: 40px;
+    line-height: 40px;
+    padding: 1px 6px;
+    margin: 0;
+    flex: 1;
+    text-align: center;
+}
+.form textarea:focus {
+    border: 2px solid #FAFAFA;
+}
+.form textarea {
+    border-radius: 10px 0 0 10px;  
+    background: rgba(255, 64, 129, 0.75);
+    //background: linear-gradient(#FF80ABFF, #FF408180);
+    border: 1px solid #FF80AB;
+    padding-left: 10px;
+    color: white;
+    font-family: Liberation Mono, Arial;
+    font-size: 14px;
+    height: 40px;
+    line-height: 20px;
+    margin: 0;
+    padding-top: 1px;
+    padding-bottom: 1px;
+    flex: 3;
+    resize: none;
+}
+
+.top {
+    width: 50vw;
+    min-width: 500px;
+    margin: auto;
+    display: flex;
+    justify-content: center;
+    box-shadow: rgba(0, 0, 0, 0.188235) 0px 10px 50px, rgba(0, 0, 0, 0.227451) 0px 6px 50px;
+    border-radius: 10px;
+}
+
+.top input[type="text"]:focus {
+    border: 2px solid #FAFAFA;
+}
+.top input[type="text"] {
+    background: rgba(255, 64, 129, 0.75);
+    //background: linear-gradient(#FF80ABFF, #FF408180);
+    border: 1px solid #FF80AB;
+    padding-left: 10px;
+    color: white;
+    font-family: Liberation Mono, Arial;
+    font-size: 14px;
+    height: 40px;
+    line-height: 20px;
+    margin: 0;
+    padding-top: 1px;
+    padding-bottom: 1px;
+    flex: 1;
+}
+.top input[type="text"].left {
+    border-radius: 10px 0 0 10px;
+    flex:3;
+}
+.top input[type="text"].right {
+    border-radius: 0 10px 10px 0;
+}
+
+#log .disconnect, #log .channel_join, #log .channel_quit {
+    font-style: italic;
+}
+#log .message {
+    font-family: Liberation Mono, Arial;
+}
+
+#login, #error404 {
+    color: white;
+    margin: 0 auto;
+    padding: 10px;
+    overflow: auto;
+    height: 100vh;
+    width: 50vw;
+    min-width: 500px;
+    border: 1px solid white;
+    border-radius: 10px;
+    background: rgba(244, 143, 177, 0.75);
+    //background: linear-gradient(#F48FB1FF, #F5005780);
+    word-wrap: break-word;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    //align-items: stretch;
+}
+
+#login input[type="text"], #login input[type="submit"], #login input[type="password"] {
+    border: 1px solid #FF80AB;
+    padding-left: 10px;
+    color: white;
+    font-family: Liberation Mono, Arial;
+    font-size: 14px;
+    height: 40px;
+    line-height: 20px;
+    margin: 0;
+    padding-top: 1px;
+    padding-bottom: 1px;
+    //flex: 1;
+    border-radius: 10px;
+    margin-top: 5px;
+}
+
+#login span {
+    margin-top: 5px;
+}
+
+#login input[type="text"], #login input[type="password"] {
+    background: rgba(255, 64, 129, 0.75);
+    //background: linear-gradient(#FF80ABFF, #FF408180);
+}
+
+#login input[type="submit"] {
+    background: rgba(245, 0, 87, 0.75);
+    //background: linear-gradient(#FF4081FF, #F5005780);
+    border: 1px solid #FF80AB;
+}
+
+#login input[type="text"]:focus, #login input[type="password"]:focus {
+    border: 2px solid #FAFAFA;
+}

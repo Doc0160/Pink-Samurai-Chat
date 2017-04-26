@@ -18,6 +18,9 @@ import (
 	"github.com/gorilla/websocket"
 )
 
+var _ = bytes.TrimSpace
+var _ = log.Println
+
 const (
 	// Time allowed to write a message to the peer.
 	writeWait = 10 * time.Second
@@ -53,6 +56,8 @@ type Client struct {
 	send chan []byte
 
     Username string
+
+    Channel string
 }
 
 // readPump pumps messages from the websocket connection to the hub.
@@ -70,6 +75,16 @@ func (c *Client) readPump() {
 	c.conn.SetReadDeadline(time.Now().Add(pongWait))
 	c.conn.SetPongHandler(func(string) error { c.conn.SetReadDeadline(time.Now().Add(pongWait)); return nil })
 
+    temp, _ := json.Marshal(NewHello())
+    c.send <- temp
+
+    for _, t := range c.hub.history {
+        c.send <- t
+    }
+    
+    temp, _ = json.Marshal(NewChannelJoin(c.Username, c.Channel))
+    c.hub.broadcast <- temp
+    
     for {
 		_, message, err := c.conn.ReadMessage()
 		if err != nil {
@@ -78,21 +93,53 @@ func (c *Client) readPump() {
 			}
 			break
 		}
-		message = bytes.TrimSpace(bytes.Replace(message, newline, space, -1))
+		//message = bytes.TrimSpace(message)
 
         stub := Stub{}
         json.Unmarshal(message, &stub)
-        if stub.Type == _UsernameChange {
-            uc := UsernameChange{}
-            json.Unmarshal(message, &uc)
-            c.Username = uc.Username
-        } else if stub.Type == _ChannelJoin {
+        if stub.Type == _ChannelJoin {
             uc := ChannelJoin{}
             json.Unmarshal(message, &uc)
-            c.Username = uc.Username
+            c.Channel = uc.Channel
+            uc.Username = c.Username
+            c.hub.broadcast <- message
+            for _, t := range c.hub.history {
+                select {
+                    case _, ok := <- c.send:
+                    if ok != true {
+                        break
+                    }
+                    
+                    case c.send <- t:
+                }
+            }
+            continue
+            
+        } else if stub.Type == _Command {
+            uc := Command{}
+            json.Unmarshal(message, &uc)
+            switch uc.Command {
+            case "/tentacules":
+                m := NewMessage("Tentacule-Sama", uc.Channel, "I bet you'd love my tentacules! <3")
+                b, _ := json.Marshal(m)
+                c.hub.broadcast <- b
+                
+            default:
+                log.Println(uc)
+                m := NewMessage("Tentacule-Sama", uc.Channel, "I don't understand you.")
+                b, _ := json.Marshal(m)
+                c.send <- b
+            }
+            continue
+            
+        } else {
+            var uc map[string]interface{}
+            json.Unmarshal(message, &uc)
+            uc["username"] = c.Username
+            uc["time"] = time.Now().UnixNano()
+            b, _ := json.Marshal(uc)
+            c.hub.broadcast <- b
         }
-        
-		c.hub.broadcast <- message
 	}
 }
 
@@ -112,6 +159,8 @@ func (c *Client) writePump() {
 		case message, ok := <-c.send:
 			c.conn.SetWriteDeadline(time.Now().Add(writeWait))
 			if !ok {
+                temp, _ := json.Marshal(NewDisconnect(c.Username))
+                c.hub.broadcast <- temp
 				// The hub closed the channel.
 				c.conn.WriteMessage(websocket.CloseMessage, []byte{})
 				return
@@ -122,13 +171,6 @@ func (c *Client) writePump() {
 				return
 			}
 			w.Write(message)
-
-			// Add queued chat messages to the current websocket message.
-			n := len(c.send)
-			for i := 0; i < n; i++ {
-				w.Write(newline)
-				w.Write(<-c.send)
-			}
 
 			if err := w.Close(); err != nil {
 				return
@@ -149,7 +191,14 @@ func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		return
 	}
-	client := &Client{hub: hub, conn: conn, send: make(chan []byte, 256)}
+    cookie, _ := r.Cookie("session")
+	client := &Client{
+        hub: hub,
+        conn: conn,
+        send: make(chan []byte, 256),
+        Username: members.hashs[cookie.Value].Username,
+    }    
+    
 	client.hub.register <- client
 	go client.writePump()
 	client.readPump()

@@ -1,0 +1,55 @@
+2016-11-21    <Doc0160@DOC>
+
+        * login.go: secure cookie stuff
+
+        * main.go: http compression, cache
+
+2016-11-18    <Doc0160@DOC>
+
+        * build.bat (echo): yeahn compil stuff
+
+2016-11-16    <Doc0160@DOC>
+
+        * login.html: added login/register interface thing !
+
+        * login.go: added login/register thing !
+
+        * home.html: added sounds/music
+        easter eggs with music now
+
+2016-11-15    <Doc0160@DOC>
+
+        * home.css: css extracted from home.html and added to assets
+
+        * build.bat: added stats to assets
+
+        * home.html: added multiline support
+
+2016-11-14    <Doc0160@DOC>
+
+        * home.html: fuck ie compatibility, get a real browser man
+        also added glitch easter egg (konami code to activate)
+        I like easter eggs: added Gay & Glitter easter egg
+
+2016-11-12    <Doc0160@DOC>
+
+        * home.html: modifications emojis (emojione)
+
+        * hub.go: disconnect msg
+
+2016-11-11    <Doc0160@DOC>
+
+        * home.html: added emojis with emojione
+
+        * build.bat: embedded data
+
+2016-11-09    <Doc0160@DOC>
+
+        * (Idée): diabolique de proxy farceur ^^
+
+        * home.html: Little CSS
+
+2016-11-08    <Doc0160@DOC>
+        * home.html: Added Tentacule-Smam
+        *  (Changelog): Added Changelog
+
